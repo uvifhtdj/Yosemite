@@ -1,0 +1,79 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: modifier
+
+on:
+  workflow_dispatch: # 手动触发
+    inputs:
+        app_name:
+          description: '应用名称(n&v&ul)'
+          required: false
+          default: ''
+  #push:
+  #  branches: [ "main" ]
+  schedule:
+    - cron: '0 1 * * *'  # 8点
+    - cron: '0 5 * * *'  # 13点
+    - cron: '0 12 * * *'  # 20点
+
+jobs:
+  build:
+
+    runs-on: windows-latest # 使用 Windows 环境，因为 .NET Framework 仅在 Windows 上可用
+
+    steps:
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9' # 可以根据需要选择 Python 版本
+    - name: Install fundrive package
+      run: pip install fundrive[baidu]
+    - uses: actions/checkout@v4
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1 # 安装 MSBuild
+
+    - name: Restore dependencies
+      run: nuget restore # 恢复 NuGet 包
+
+    - name: Build
+      run: msbuild wrapper\wrapper.csproj /p:Configuration=Debug /t:Rebuild /m
+
+    - name: Run App
+      env:
+        MANUAL_TRIGGER_APP_NAME : ${{ github.event.inputs.app_name }}
+        BAIDU_BDUSS : ${{ secrets.BAIDU_BDUSS }}
+        X_URL : ${{ secrets.X_URL }}
+        X_PWD : ${{ secrets.X_PWD }}
+        X_SHOW_LOG : ${{ secrets.X_SHOW_LOG }}
+        FORCE_UPLOAD_TYPE : ${{ secrets.FORCE_UPLOAD_TYPE }}
+      run: |
+        cd wrapper\bin\Debug
+        .\wrapper.exe 2
+        
+#    - name: Check if file exists
+#      id: check-file
+#      run: |
+#          if (Test-Path -Path "wrapper\1.txt") {
+#            echo "file-exists=true" >> $env:GITHUB_OUTPUT
+#          } else {
+#            echo "file-exists=false" >> $env:GITHUB_OUTPUT
+#          }
+
+    - name: Commit and push the new file
+#      if: steps.check-file.outputs.file-exists == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Settings-Actions-General，Workflow permissions，Read and write permissions
+      run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 添加文件到暂存区
+          git add wrapper/1.txt
+          git add wrapper/2.txt
+
+          # 提交文件
+          git commit -m "Update txt from build output"
+
+          # 推送到远程仓库
+          git push origin HEAD:main
