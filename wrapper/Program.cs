@@ -11,7 +11,8 @@ namespace wrapper
     enum CmdType
     {
         Check = 1,
-        Modifier,
+        Modifier = 2,
+        WD = 3,
     }
 
     internal class Program
@@ -42,6 +43,12 @@ namespace wrapper
                             string path = localDir + FromB64("XHRlc3RfY3JhY2tcYmluXERlYnVnXHRlc3RfY3JhY2suZXhl");
                             RunSubApp(path);
                             CopyFromFile2(localDir);
+                        }
+                        break;
+                    case CmdType.WD:
+                        {
+                            string path = localDir + FromB64("XHRlc3RfY3JhY2tcYmluXERlYnVnXHRlc3RfY3JhY2suZXhl");
+                            RunSubApp(path, "wd");
                         }
                         break;
                 }
@@ -207,11 +214,11 @@ namespace wrapper
             return localDir;
         }
 
-        static void RunSubApp(string file)
+        static void RunSubApp(string file, params string[] args)
         {
             Output($"【run sub app】{file}");
             string err = "";
-            int exitCode = RunProcess(file, "", true, null, out err);
+            int exitCode = RunProcess(file, string.Join(" ", args), true, null, out err);
             Output("exit code:" + exitCode);
             if (exitCode != 0)
             {
