@@ -7,8 +7,12 @@ on:
   workflow_dispatch: # 手动触发
     inputs:
         wd_mc:
-          description: 'mc'
+          description: 'code'
           required: true
+          default: ''
+        wd_v:
+          description: 'ver'
+          required: false
           default: ''
 
 jobs:
@@ -37,6 +41,7 @@ jobs:
       env:
         X_URL : ${{ secrets.X_URL }}
         WD_MC : ${{ github.event.inputs.wd_mc }}
+        WD_V : ${{ github.event.inputs.wd_v }}
         BAIDU_BDUSS : ${{ secrets.BAIDU_BDUSS }}
         X_PWD : ${{ secrets.X_PWD }}
         X_SHOW_LOG : ${{ secrets.X_SHOW_LOG }}
