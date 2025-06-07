@@ -6,13 +6,17 @@ name: wd
 on:
   workflow_dispatch: # 手动触发
     inputs:
+        wd_v:
+          description: 'type'
+          required: true
+          default: 'new_5_6_2'
+          type: choice  
+          options:      
+            - new_5_6_2
+            - old_3_5
         wd_mc:
           description: 'code'
           required: true
-          default: ''
-        wd_v:
-          description: 'ver'
-          required: false
           default: ''
 
 jobs:
