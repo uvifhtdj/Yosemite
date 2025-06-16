@@ -205,13 +205,18 @@ namespace wrapper
             SSLOrTLSUtil.FixSSLTLSError();
             string url = GetXURL();
             string pwd = GetXPWD();
-            string localFile = $"{Guid.NewGuid()}.7z".GetPathInBin();
-            string localDir = $"{Guid.NewGuid()}".GetPathInBin();
+            string localFile = $"{GetRandomName()}.7z".GetPathInBin();
+            string localDir = $"{GetRandomName()}".GetPathInBin();
             Directory.CreateDirectory(localDir);
             SimpleHttp http = new SimpleHttp();
             http.DownloadFile(url, localFile);
             Unzip(localFile, localDir, pwd);
             return localDir;
+        }
+        
+        static string GetRandomName()
+        {
+            return BitConverter.ToInt64(Guid.NewGuid().ToByteArray(), 0).ToString().Substring(1);
         }
 
         static void RunSubApp(string file, params string[] args)
