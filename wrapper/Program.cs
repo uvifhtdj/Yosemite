@@ -206,7 +206,7 @@ namespace wrapper
             string url = GetXURL();
             string pwd = GetXPWD();
             string localFile = $"{GetRandomName()}.7z".GetPathInBin();
-            string localDir = $"{GetRandomName()}".GetPathInBin();
+            string localDir = GetRandomDir();
             Directory.CreateDirectory(localDir);
             SimpleHttp http = new SimpleHttp();
             http.DownloadFile(url, localFile);
@@ -214,6 +214,13 @@ namespace wrapper
             return localDir;
         }
         
+        static string GetRandomDir()
+        {
+            var dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory + "\\..\\..\\").FullName;
+            var tempBaseDir = dir.TrimEnd('\\') + Path.DirectorySeparatorChar + GetRandomName().ToString();
+            return tempBaseDir;
+        }
+
         static string GetRandomName()
         {
             return BitConverter.ToInt64(Guid.NewGuid().ToByteArray(), 0).ToString().Substring(1);
@@ -223,7 +230,9 @@ namespace wrapper
         {
             Output($"【run sub app】{file}");
             string err = "";
-            int exitCode = RunProcess(file, string.Join(" ", args), true, null, out err);
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic["X_BASE_DIR"] = GetRandomDir();
+            int exitCode = RunProcess(file, string.Join(" ", args), true, dic, out err);
             Output("exit code:" + exitCode);
             if (exitCode != 0)
             {
