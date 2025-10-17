@@ -20,17 +20,17 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-    - name: Install fundrive package
-      run: pip install fundrive[baidu]
+    # - name: Install fundrive package
+    #   run: pip install fundrive[baidu]
     - uses: actions/checkout@v4
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
-    - name: Restore dependencies
-      run: nuget restore
+    # - name: Restore dependencies
+    #   run: nuget restore
 
-    - name: Build
-      run: msbuild wrapper\wrapper.csproj /p:Configuration=Debug /t:Rebuild /m
+    # - name: Build
+    #   run: msbuild wrapper\wrapper.csproj /p:Configuration=Debug /t:Rebuild /m
 
     - name: Run App
       env:
