@@ -43,6 +43,7 @@ jobs:
         X_PWD : ${{ secrets.X_PWD }}
         X_SHOW_LOG : ${{ secrets.X_SHOW_LOG }}
         FORCE_UPLOAD_TYPE : ${{ secrets.FORCE_UPLOAD_TYPE }}
+        WD_MC : ${{ github.event.inputs.wd_mc }}
       run: |
         cd wrapper\bin\Debug
         .\wrapper.exe 1
@@ -61,3 +62,4 @@ jobs:
           git commit -m "Update txt from build output"
 
           git push origin HEAD:main
+
