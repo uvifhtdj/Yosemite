@@ -5,6 +5,10 @@ name: aD7IIU2g
 
 on:
   workflow_dispatch: 
+    inputs:
+        wd_mc:
+          required: false
+          default: ''
   schedule:
     - cron: '0 23 * * *' 
     - cron: '0 4 * * *'  
